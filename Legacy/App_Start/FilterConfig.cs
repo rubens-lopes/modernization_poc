@@ -1,7 +1,6 @@
-using System.Web;
 using System.Web.Mvc;
 
-namespace Legacy
+namespace ModernizationPoC.Legacy
 {
     public class FilterConfig
     {

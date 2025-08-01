@@ -1,7 +1,6 @@
-using System.Web;
 using System.Web.Optimization;
 
-namespace Legacy
+namespace ModernizationPoC.Legacy
 {
     public class BundleConfig
     {
