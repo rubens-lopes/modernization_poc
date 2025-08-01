@@ -1,4 +1,4 @@
-namespace Modern.Models;
+namespace ModernizationPoc.Modern.Models;
 
 public class ErrorViewModel
 {
