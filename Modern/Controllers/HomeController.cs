@@ -2,11 +2,13 @@ using System.Diagnostics;
 
 using Microsoft.AspNetCore.Mvc;
 
+using ModernizationPoC.Modern.DAL;
+
 using ModernizationPoc.Modern.Models;
 
 namespace ModernizationPoc.Modern.Controllers;
 
-public class HomeController(ILogger<HomeController> logger) : Controller
+public class HomeController(ILogger<HomeController> logger, ApplicationDbContext dbContext) : Controller
 {
     // public IActionResult Index()
     // {
@@ -22,6 +24,7 @@ public class HomeController(ILogger<HomeController> logger) : Controller
     {
         ViewBag.Message = "Your <b>modern</b> application description page.";
         logger.LogInformation("About");
+        Console.WriteLine(dbContext.Toggles.Count());
         return View();
     }
 
