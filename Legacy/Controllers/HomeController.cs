@@ -1,11 +1,18 @@
+using System;
+using System.Linq;
 using System.Web.Mvc;
+
+using ModernizationPoC.Legacy.DAL;
 
 namespace ModernizationPoC.Legacy.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly ApplicationDbContext _db = new ApplicationDbContext();
+        
         public ActionResult Index()
         {
+            Console.WriteLine(_db.Toggles.Count());
             return View();
         }
 

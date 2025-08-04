@@ -24,8 +24,6 @@ app.Use(async (context, next) =>
     if (!context.Response.Headers.ContainsKey("X-Frame-Options"))
         context.Response.Headers.Append("X-Frame-Options", "DENY");
 
-    context.Response.Headers.Remove("x-powered-by");
-
     await next();
 });
 

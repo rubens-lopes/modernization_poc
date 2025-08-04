@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net48</TargetFrameworks>
+        <AssemblyName>ModernizationPoC.Shared</AssemblyName>
+        <RootNamespace>ModernizationPoC.Shared</RootNamespace>
+    </PropertyGroup>
+
+</Project>
