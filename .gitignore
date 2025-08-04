@@ -1,7 +1,10 @@
 .idea/
+.vs/
 bin/
 obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
 publish/
+App_Data/
+**/*.sln.DotSettings.user
