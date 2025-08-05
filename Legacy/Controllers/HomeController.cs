@@ -1,8 +1,8 @@
-using System;
 using System.Linq;
 using System.Web.Mvc;
 
 using ModernizationPoC.Legacy.DAL;
+using ModernizationPoC.Shared;
 
 namespace ModernizationPoC.Legacy.Controllers
 {
@@ -12,12 +12,28 @@ namespace ModernizationPoC.Legacy.Controllers
         
         public ActionResult Index()
         {
-            Console.WriteLine(_db.Toggles.Count());
             return View();
+        }
+
+        public ActionResult UseLegacyAbout()
+        {
+            UseAbout(useNet80: false);
+            ViewBag.Message = "About page is using net48";
+
+            return View("About");
+        }
+
+        public ActionResult UseModernAbout()
+        {
+            UseAbout(useNet80: true);
+            ViewBag.Message = "About page is using net80";
+            
+            return View("About");
         }
 
         public ActionResult About()
         {
+            ViewBag.Title = "About";
             ViewBag.Message = "Your application description page.";
             return View();
         }
@@ -26,6 +42,22 @@ namespace ModernizationPoC.Legacy.Controllers
         {
             ViewBag.Message = "Your contact page.";
             return View();
+        }
+
+        private void UseAbout(bool useNet80)
+        {
+            var toggle = _db.Toggles.FirstOrDefault();
+            if (toggle is null)
+            {
+                toggle = new ModernizationToggle { AboutPage = useNet80 };
+                _db.Toggles.Add(toggle);
+            }
+            else
+            {
+                toggle.AboutPage = useNet80;
+            }
+
+            _db.SaveChanges();
         }
     }
 }
