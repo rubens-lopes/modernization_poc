@@ -22,8 +22,8 @@
                 <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                 <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                 <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                <li>@Html.ActionLink("Use Legacy About Page", "UseLegacyAbout", "Home", htmlAttributes: new { @class = "nav-link" })</li>
-                <li>@Html.ActionLink("Use Modern About Page", "UseModernAbout", "Home", htmlAttributes:new { @class = "nav-link" })</li>
+                <li>@Html.ActionLink("Use Legacy About Page", "UseLegacyAbout", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                <li>@Html.ActionLink("Use Modern About Page", "UseModernAbout", "Home", new { area = "" }, new { @class = "nav-link" })</li>
             </ul>
             @await Html.PartialAsync("_LoginPartial")
         </div>
