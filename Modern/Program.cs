@@ -47,7 +47,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
             maxRetryDelay: TimeSpan.FromSeconds(30),
             errorNumbersToAdd: null);
     });
-}, ServiceLifetime.Singleton);
+});
 
 var app = builder.Build();
 

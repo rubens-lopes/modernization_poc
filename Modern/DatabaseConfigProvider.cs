@@ -10,12 +10,12 @@ namespace ModernizationPoC.Modern;
 public class DatabaseConfigProvider : IProxyConfigProvider
 {
     private volatile IProxyConfig _config;
-    private readonly ApplicationDbContext _dbContext;
+    private readonly IServiceScopeFactory _scopeFactory;
     private readonly object _lock = new();
 
-    public DatabaseConfigProvider(ApplicationDbContext dbContext)
+    public DatabaseConfigProvider(IServiceScopeFactory scopeFactory)
     {
-        _dbContext = dbContext;
+        _scopeFactory = scopeFactory;
         _config = LoadConfigAsync().GetAwaiter().GetResult();
     }
 
@@ -44,8 +44,9 @@ public class DatabaseConfigProvider : IProxyConfigProvider
 
     private async Task<IProxyConfig> LoadConfigAsync()
     {
-        var proxyAbout = await _dbContext.Toggles.AnyAsync(t => t.AboutPage == false);
-        Console.WriteLine(await _dbContext.Toggles.CountAsync());
+        using var scope = _scopeFactory.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var proxyAbout = await dbContext.Toggles.AnyAsync(t => t.AboutPage == false);
 
         var routes = new List<RouteConfig>
         {
