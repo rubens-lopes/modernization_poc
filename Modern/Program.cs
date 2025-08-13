@@ -1,10 +1,14 @@
 using Microsoft.EntityFrameworkCore;
+
+using ModernizationPoC.Modern;
 using ModernizationPoC.Modern.DAL;
+
+using Yarp.ReverseProxy.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddReverseProxy().LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+builder.Services.AddSingleton<IProxyConfigProvider, DatabaseConfigProvider>();
+builder.Services.AddReverseProxy();
 builder.Services.AddControllersWithViews();
 
 // Set up DataDirectory path
@@ -14,13 +18,13 @@ string dataDirectory = string.Empty;
 if (!string.IsNullOrEmpty(solutionDir))
 {
     dataDirectory = Path.Combine(solutionDir, "Legacy", "App_Data");
-    
+
     // Ensure the directory exists
     if (!Directory.Exists(dataDirectory))
     {
         Directory.CreateDirectory(dataDirectory);
     }
-    
+
     AppDomain.CurrentDomain.SetData("DataDirectory", dataDirectory);
 }
 
@@ -28,13 +32,13 @@ if (!string.IsNullOrEmpty(solutionDir))
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    
+
     // Replace DataDirectory placeholder with actual path
     if (!string.IsNullOrEmpty(dataDirectory) && connectionString.Contains("|DataDirectory|"))
     {
         connectionString = connectionString.Replace("|DataDirectory|", dataDirectory);
     }
-    
+
     options.UseSqlServer(connectionString, sqlOptions =>
     {
         // Enable retry on failure for transient errors
@@ -59,13 +63,13 @@ using (var scope = app.Services.CreateScope())
     {
         // Log the exception (you might want to use proper logging here)
         Console.WriteLine($"Database initialization error: {ex.Message}");
-        
+
         // Try with a simpler connection string for LocalDB
-        var fallbackConnectionString = "Server=(LocalDB)\\MSSQLLocalDB;Database=ModernizationPoC;Trusted_Connection=True;MultipleActiveResultSets=true;AttachDbFilename=|DataDirectory|\\ModernizationPoC.mdf";
-        
+        const string fallbackConnectionString = @"Server=(LocalDB)\MSSQLLocalDB;Database=ModernizationPoC;Trusted_Connection=True;MultipleActiveResultSets=true;AttachDbFilename=|DataDirectory|\ModernizationPoC.mdf";
+
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         optionsBuilder.UseSqlServer(fallbackConnectionString.Replace("|DataDirectory|", dataDirectory));
-        
+
         using var fallbackContext = new ApplicationDbContext(optionsBuilder.Options);
         fallbackContext.Database.EnsureCreated();
     }
@@ -83,10 +87,10 @@ app.Use(async (context, next) =>
 {
     if (!context.Response.Headers.ContainsKey("Strict-Transport-Security"))
         context.Response.Headers.Append("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
-    
+
     if (!context.Response.Headers.ContainsKey("X-Content-Type-Options"))
         context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
-    
+
     if (!context.Response.Headers.ContainsKey("X-Frame-Options"))
         context.Response.Headers.Append("X-Frame-Options", "DENY");
 
@@ -97,4 +101,5 @@ app.UseRouting();
 app.UseAuthorization();
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapReverseProxy();
+
 app.Run();
